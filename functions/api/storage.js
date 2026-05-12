@@ -1,5 +1,5 @@
 // 统一存储接口
-// Cloudflare Workers
+// 支持 EdgeOne Pages / Cloudflare Workers
 // 支持按分类拆分链接存储
 
 import { getKV, getCorsHeaders, verifyAuth, jsonResponse } from './_kvAdapter.js';
@@ -82,7 +82,7 @@ export async function onRequest(context) {
       }
 
       // 获取子配置
-      if (['ai', 'website', 'search', 'icon', 'view', 'ui'].includes(getConfig)) {
+      if (['ai', 'website', 'search', 'mastodon', 'weather', 'icon', 'view', 'ui'].includes(getConfig)) {
         const configStr = await kv.get('config');
         const config = configStr ? JSON.parse(configStr) : {};
         const defaults = {
@@ -189,7 +189,7 @@ export async function onRequest(context) {
       }
 
       // 保存子配置
-      if (['search', 'ai', 'website', 'icon', 'view', 'ui'].includes(body.saveConfig)) {
+      if (['search', 'ai', 'website', 'mastodon', 'weather', 'icon', 'view', 'ui'].includes(body.saveConfig)) {
         const configStr = await kv.get('config');
         const config = configStr ? JSON.parse(configStr) : {};
         config[body.saveConfig] = body.config;

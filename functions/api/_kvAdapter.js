@@ -1,15 +1,21 @@
-// Cloudflare Workers KV 适配层
+// 跨平台 KV 适配层
+// 支持 EdgeOne Pages (全局变量) / Cloudflare Workers (env 绑定)
 
 /**
- * 获取 KV 实例
+ * 获取 KV 实例，自动检测运行平台
  * @param {object} env - 函数 context.env
  * @returns {object} KV 实例
  */
 export function getKV(env) {
+  // Cloudflare Workers: KV 在 env 上
   if (env?.CLOUDNAV_KV && typeof env.CLOUDNAV_KV.get === 'function') {
     return env.CLOUDNAV_KV;
   }
-  throw new Error('KV binding "CLOUDNAV_KV" not found. Please bind a KV namespace named "CLOUDNAV_KV" in your Cloudflare Pages project.');
+  // EdgeOne Pages: KV 作为全局变量注入
+  if (typeof CLOUDNAV_KV !== 'undefined' && typeof CLOUDNAV_KV.get === 'function') {
+    return CLOUDNAV_KV;
+  }
+  throw new Error('KV binding "CLOUDNAV_KV" not found. Please check your deployment configuration.');
 }
 
 /**
